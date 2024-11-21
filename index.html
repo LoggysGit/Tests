@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHA-256 Хеш</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0-crypto-js.js"></script>
+</head>
+<body>
+    <h1>Генератор SHA-256 хеша</h1>
+    <h2>Хеш SHA-256:</h2>
+    <p id="outputHash"></p>
+
+    <script>
+        // Прослушивание сообщения от Web Bridge
+        window.addEventListener('message', function(event) {
+            // Получение данных из сообщения
+            const inputText = event.data.text;
+
+            if (inputText) {
+                // Вычисление SHA-256 хеша
+                const hash = CryptoJS.SHA256(inputText).toString(CryptoJS.enc.Base64);
+
+                // Отображение результата на странице
+                document.getElementById('outputHash').innerText = hash;
+
+                // Отправка хеша обратно через Web Bridge (если необходимо)
+                event.source.postMessage({ hash: hash }, event.origin);
+            }
+        });
+    </script>
+</body>
+</html>
