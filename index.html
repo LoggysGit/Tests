@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,127 +8,90 @@
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      padding: 20px;
       background-color: #f4f4f4;
     }
-
-    .container {
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
-      max-width: 400px;
+    .options {
+      margin: 10px 0;
     }
-
-    h1 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-    }
-
-    #options {
-      margin-bottom: 20px;
-    }
-
     label {
       display: block;
       margin: 5px 0;
     }
-
+    .yes {
+      color: white;
+      background-color: green;
+      padding: 5px 10px;
+      border-radius: 5px;
+    }
     button {
-      padding: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
       background-color: #4CAF50;
       color: white;
       border: none;
-      border-radius: 4px;
-      cursor: pointer;
+      border-radius: 5px;
     }
-
     button:hover {
       background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Опросник</h1>
-    <form id="pollForm">
-      <div id="options">
-        <!-- Варианты ответа будут загружаться здесь -->
-      </div>
-      <button type="submit">Отправить</button>
-    </form>
+
+  <h1>Выберите вариант:</h1>
+
+  <div class="options" id="options">
+    <!-- Варианты будут загружаться сюда -->
   </div>
 
+  <button id="submitBtn">Отправить</button>
+
   <script>
-    // URL для доступа к Realtime Database Firebase
-    const firebaseDatabaseURL = "https://test-db-b9393-default-rtdb.europe-west1.firebasedatabase.app";
+    // Массив вариантов
+    const optionsList = [
+      "Альберт", "Ирада", "Айша", "Артур", "Даниил", "Ярик",
+      "Амарис", "Сабина", "Давид", "Эмир", "Федор"
+    ];
 
-    // Загружаем варианты ответа
-    async function loadOptions() {
-      const optionsEndpoint = `${firebaseDatabaseURL}/`;
-      try {
-        const response = await fetch(optionsEndpoint);
-        const data = await response.json();
-        const optionsDiv = document.getElementById("options");
-        optionsDiv.innerHTML = ""; // Очистим предыдущие данные
+    // Функция для отображения вариантов
+    function loadOptions() {
+      const optionsDiv = document.getElementById("options");
+      optionsDiv.innerHTML = ""; // Очистим контейнер перед добавлением новых вариантов
 
-        if (data) {
-          Object.entries(data).forEach(([key, value]) => {
-            const label = document.createElement("label");
-            label.innerHTML = `
-              <input type="radio" name="option" value="${key}"> ${value}
-            `;
-            optionsDiv.appendChild(label);
-          });
-        } else {
-          optionsDiv.innerHTML = "<p>Нет доступных вариантов</p>";
-        }
-      } catch (error) {
-        console.error("Ошибка при загрузке вариантов:", error);
-      }
+      optionsList.forEach((option, index) => {
+        const label = document.createElement("label");
+        label.innerHTML = `
+          <input type="radio" name="option" value="${option}" id="option${index}">
+          ${option}
+        `;
+        optionsDiv.appendChild(label);
+      });
     }
 
-    // Отправляем ответ и удаляем выбранный вариант
-    async function submitForm(event) {
-      event.preventDefault();
-      const selectedOption = document.querySelector("input[name='option']:checked");
-      if (!selectedOption) {
-        alert("Выберите вариант ответа!");
-        return;
-      }
-
-      const optionKey = selectedOption.value;
-      const deleteEndpoint = `${firebaseDatabaseURL}/options/${optionKey}.json`;
-
-      try {
-        // Удаляем выбранный вариант из базы данных
-        const response = await fetch(deleteEndpoint, { method: "DELETE" });
-        if (response.ok) {
-          alert("Ваш ответ сохранён!");
-          loadOptions(); // Перезагружаем список вариантов
+    // Функция для выделения выбранного варианта
+    function markSelectedOption() {
+      const options = document.getElementsByName("option");
+      options.forEach(option => {
+        const label = option.parentElement;
+        if (option.checked) {
+          label.classList.add("yes");
         } else {
-          alert("Не удалось сохранить ответ.");
+          label.classList.remove("yes");
         }
-      } catch (error) {
-        console.error("Ошибка при отправке данных:", error);
-      }
+      });
     }
 
-    // Привязываем обработчик отправки формы
-    document.getElementById("pollForm").addEventListener("submit", submitForm);
+    // Обработчик нажатия кнопки
+    document.getElementById("submitBtn").addEventListener("click", function() {
+      markSelectedOption();
+    });
 
-    // Загружаем варианты при загрузке страницы
+    // Загружаем варианты на страницу
     loadOptions();
   </script>
+
 </body>
 </html>
+
