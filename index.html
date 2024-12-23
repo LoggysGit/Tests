@@ -95,6 +95,7 @@
 
     // Функция для отправки сообщения в Telegram
     function sendMessage(mess) {
+      console.error("OK")
       const botToken = '7825993060:AAHJc1ZXK8Y88Hztp3JQKcZJR7yaeyRDuvk'; // Ваш токен
       const chatId = '5576471464'; // Ваш chat_id
       const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(mess)}`;
