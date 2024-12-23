@@ -73,14 +73,45 @@
     // Функция для выделения выбранного варианта
     function markSelectedOption() {
       const options = document.getElementsByName("option");
+      let selectedOption = "";
+      
       options.forEach(option => {
         const label = option.parentElement;
         if (option.checked) {
           label.classList.add("yes");
+          selectedOption = option.value; // Сохраняем выбранный вариант
         } else {
           label.classList.remove("yes");
         }
       });
+
+      // Если выбран вариант, отправляем его в Telegram
+      if (selectedOption) {
+        sendMessage(selectedOption);
+      } else {
+        alert("Пожалуйста, выберите вариант!");
+      }
+    }
+
+    // Функция для отправки сообщения в Telegram
+    function sendMessage(mess) {
+      const botToken = '7825993060:AAHJc1ZXK8Y88Hztp3JQKcZJR7yaeyRDuvk'; // Ваш токен
+      const chatId = '5576471464'; // Ваш chat_id
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(mess)}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.ok) {
+            alert("Заявка отправлена!");
+          } else {
+            alert("Ошибка отправки");
+          }
+        })
+        .catch(error => {
+          console.error("Ошибка:", error);
+          alert(`ERROR: ${error}`);
+        });
     }
 
     // Обработчик нажатия кнопки
@@ -94,4 +125,3 @@
 
 </body>
 </html>
-
